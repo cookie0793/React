@@ -104,8 +104,8 @@ GET - http://localhost:12000/api/cars/search
 8. color로 조회
 GET - http://localhost:12000/api/cars/search/findByColor?color=white
 
-
-
+9. ID가 3인 자동차 삭제
+DELETE - http://localhost:12000/api/cars/3
 */
 
 // @RepositoryRestResource -> 현재 Repository의 api 주소를 변경할 수 있다.
