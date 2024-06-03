@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.zerock.carddatebase.filter.AuthenticationFilter;
 
 /*
 sping security 설정을 하게 되면
@@ -41,6 +43,7 @@ Using generated security password: 543ec2aa-5507-4af2-b75b-c35c29b72a7f
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
+    private final AuthenticationFilter authenticationFilter;
 
     // 사용자인증을 위한 userDetailsService 설정/패스워드 암호화 알고리즘 설정
     // 암호를 DB에 저장하기 전에 BCrypt 암호화 처리
@@ -52,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     // 인증 검사하는 객체를 Bean으로 생성
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager getauthenticationManager() throws Exception {
         return authenticationManager();
     }
 
@@ -68,6 +71,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // /login엔드포인트에 대한 POST요청은 접근을 허용함.
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 // 다른 요청은 인증 과정을 거쳐야 접근할 수 있다.
-                .anyRequest().authenticated();
+                .anyRequest().authenticated().and()
+                // /login을 제외한 나머지 모든 요청은 필터를 통과해야 정상 응답을 받을 수 있다.
+                .addFilterBefore(authenticationFilter,
+                        UsernamePasswordAuthenticationToken.class);
+    }
+
+    @Autowired
+    public void setAuthenticationFilter(AuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
     }
 }

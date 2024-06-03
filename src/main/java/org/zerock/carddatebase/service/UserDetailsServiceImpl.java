@@ -1,6 +1,7 @@
 package org.zerock.carddatebase.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.User.UserBuilder;
 
 import java.util.Optional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -22,6 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // 사용자id, password, role을 넣어줘야 한다.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("loadUserByUsername-" + username);
         Optional<User> user = userRepository.findByUsername(username);
 
         UserBuilder builder = null;
