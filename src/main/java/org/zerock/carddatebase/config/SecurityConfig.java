@@ -15,8 +15,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.zerock.carddatebase.component.AuthEntryPoint;
 import org.zerock.carddatebase.filter.AuthenticationFilter;
+
+import java.util.Arrays;
 
 /*
 sping security 설정을 하게 되면
@@ -66,6 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // csrf보안은 세션을 활용하는데 Rest서버는 세션을 사용하지 않으므로 disable
         http.csrf().disable()
+                // CORS는 설정을 사용한다라는 뜻.
+                .cors().and()
                 .sessionManagement()
                 // Rest 서버는 세션 상태를 유지하지 않으므로 STATELESS
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
@@ -82,8 +89,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         UsernamePasswordAuthenticationToken.class);
     }
 
-    @Autowired
-    public void setAuthenticationFilter(AuthenticationFilter authenticationFilter) {
-        this.authenticationFilter = authenticationFilter;
+    // CORS 설정부분
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowedOrigins(Arrays.asList("https://localhost:3000", "https://www.bitcamp.co.kr")); // 이렇게하면 얘네 둘만 허용
+        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setAllowedMethods(Arrays.asList("*"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(false);
+        config.applyPermitDefaultValues();
+
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
