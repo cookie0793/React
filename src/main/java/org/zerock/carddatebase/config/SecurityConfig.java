@@ -71,11 +71,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // 어떤 요청이든 Security에 의해 검사하지 않고 모두 허용
-        http.csrf().disable()
-                .cors().and()
-                .authorizeRequests().anyRequest().permitAll();
-    }
-        /*
+//        http.csrf().disable()
+//                .cors().and()
+//                .authorizeRequests().anyRequest().permitAll();
+//    }
+
         // csrf보안은 세션을 활용하는데 Rest서버는 세션을 사용하지 않으므로 disable
         http.csrf().disable()
                 // CORS는 설정을 사용한다라는 뜻.
@@ -95,7 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(authenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
     }
-*/
+
     // CORS 설정부분
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
